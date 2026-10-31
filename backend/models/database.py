@@ -196,6 +196,23 @@ class Database:
         now = datetime.now(timezone.utc).isoformat()
         raw_str = json.dumps(raw_data, default=str) if raw_data is not None else "{}"
         with self.get_connection() as conn:
+            # Check for existing entity by project_id and identifier to prevent duplicates
+            existing = conn.execute(
+                "SELECT id FROM discovered_entities WHERE project_id = ? AND identifier = ?",
+                (project_id, identifier)
+            ).fetchone()
+            if existing:
+                ent_id = existing["id"]
+                conn.execute("""
+                    UPDATE discovered_entities
+                    SET name = ?, entity_type = ?, crustdata_id = coalesce(?, crustdata_id),
+                        match_score = ?, status = ?, raw_data = ?,
+                        email_draft = coalesce(?, email_draft), updated_at = ?
+                    WHERE id = ?
+                """, (name, entity_type, crustdata_id, match_score, status, raw_str, email_draft, now, ent_id))
+                conn.commit()
+                return ent_id
+
             conn.execute("""
                 INSERT INTO discovered_entities (id, project_id, entity_type, name, identifier, crustdata_id, match_score, status, raw_data, email_draft, created_at, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
