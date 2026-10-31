@@ -1,0 +1,86 @@
+version: "1.0"
+project_metadata:
+  id: "proj_98a7bc"
+  name: "BuildPay AI"
+  sector: "Construction Fintech / Automated Accounts Payable"
+  stage: "Pre-Seed"
+  geography:
+    - "United States"
+orchestration:
+  max_daily_crustdata_credits: 500
+  human_in_the_loop_outreach: true
+agents:
+  talent_agent:
+    enabled: true
+    target_roles:
+      - "Founding Engineer"
+      - "Senior Full-Stack Engineer"
+      - "Head of Growth"
+    required_skills:
+      - "TypeScript"
+      - "Go"
+      - "PostgreSQL"
+      - "Fintech"
+      - "LLM Orchestration"
+    target_company_backgrounds:
+      - "Procore"
+      - "Ramp"
+      - "Brex"
+      - "Stripe"
+      - "Plaid"
+      - "Briq"
+    seniority_levels:
+      - "Senior"
+      - "Staff"
+      - "Principal"
+      - "Founder"
+    watch_triggers:
+      - "job_departure"
+      - "open_to_work_flag"
+      - "new_profile_matching_criteria"
+  vendor_agent:
+    enabled: true
+    required_services:
+      - service_id: "ocr_engine"
+        category_keywords:
+          - "Document AI"
+          - "Invoice OCR API"
+          - "Financial Document Parsing"
+        min_headcount: 15
+        min_traffic_growth_mom: 5.0
+      - service_id: "payment_rails"
+        category_keywords:
+          - "Embedded Payments API"
+          - "B2B ACH Issuing"
+          - "Banking as a Service"
+        min_headcount: 50
+        min_traffic_growth_mom: 0.0
+    watch_interval_days: 7
+  vc_agent:
+    enabled: true
+    target_stages:
+      - "Pre-Seed"
+      - "Seed"
+    thesis_keywords:
+      - "Construction Tech"
+      - "B2B Fintech"
+      - "Vertical SaaS"
+      - "CFO Stack"
+    target_partner_titles:
+      - "Partner"
+      - "General Partner"
+      - "Principal"
+      - "Managing Director"
+  competitor_agent:
+    enabled: true
+    seed_competitors:
+      - "briq.com"
+      - "sitetracker.com"
+      - "ramp.com"
+    auto_discover_similar: true
+    track_metrics:
+      - "engineering_headcount_growth"
+      - "active_job_openings"
+      - "tech_stack_changes"
+      - "key_employee_departures"
+

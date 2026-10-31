@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous Startup OS | Founder-in-a-Box</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Inter', 'system-ui', 'sans-serif'],
+            mono: ['"SF Mono"', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', 'monospace']
+          },
+          colors: {
+            neutral: {
+              950: '#000000',
+              900: '#09090b',
+              850: '#111113',
+              800: '#18181b',
+              750: '#202024',
+              700: '#27272a',
+              600: '#3f3f46',
+              500: '#52525b',
+              400: '#71717a',
+              300: '#a1a1aa',
+              200: '#e4e4e7',
+              100: '#f4f4f5'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Minimalist Apple scrollbars */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #000000; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+    ::selection {
+      background: #ffffff;
+      color: #000000;
+    }
+    
+    input:focus, textarea:focus {
+      outline: none;
+    }
+  </style>
+</head>
+<body class="bg-black text-neutral-200 min-h-screen flex flex-col font-sans antialiased selection:bg-white selection:text-black">
+
+  <!-- Minimalist Header -->
+  <header class="border-b border-neutral-800/80 bg-black/80 backdrop-blur-md sticky top-0 z-50 px-6 py-3.5 flex items-center justify-between">
+    <!-- Brand / System Title -->
+    <div class="flex items-center gap-3">
+      <div class="h-7 w-7 rounded-md bg-white text-black flex items-center justify-center font-bold text-xs tracking-tighter shadow-sm">
+        OS
+      </div>
+      <div class="flex items-center gap-2.5">
+        <span class="text-sm font-semibold tracking-tight text-white">Founder-in-a-Box</span>
+        <span class="text-[11px] text-neutral-500 font-mono tracking-normal">/</span>
+        <span class="text-xs text-neutral-400 font-medium" id="header-project-name">BuildPay AI</span>
+        <span class="text-[10px] text-neutral-500 font-mono px-1.5 py-0.5 rounded border border-neutral-800 bg-neutral-900">Crustdata 2025-11-01</span>
+      </div>
+    </div>
+
+    <!-- System Controls & Stats -->
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 text-xs font-mono text-neutral-400 border border-neutral-800/80 rounded-md px-2.5 py-1 bg-neutral-900/60">
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+        <span>CREDITS:</span>
+        <span class="text-neutral-200 font-medium" id="credit-budget-display">0.48 / 500</span>
+      </div>
+
+      <button onclick="simulatePoachingEvent()" class="group text-xs text-neutral-300 hover:text-white border border-neutral-800 hover:border-neutral-700 bg-neutral-900/80 hover:bg-neutral-850 px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5">
+        <span class="h-1.5 w-1.5 rounded-full bg-neutral-400 group-hover:bg-white transition-colors"></span>
+        <span>Simulate Poaching Loop</span>
+      </button>
+
+      <a href="/docs" target="_blank" class="text-xs text-neutral-400 hover:text-white transition font-mono flex items-center gap-1">
+        <span>API Docs</span>
+        <i data-lucide="arrow-up-right" class="w-3 h-3 text-neutral-500"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- Apple Segmented Navigation -->
+  <div class="border-b border-neutral-850 bg-black px-6 py-2.5 flex items-center justify-between">
+    <div class="inline-flex bg-neutral-900 p-0.5 rounded-lg border border-neutral-800/80 text-xs">
+      <button onclick="switchTab('tab-command')" id="nav-command" class="tab-btn px-3.5 py-1.5 rounded-md font-medium text-white bg-neutral-800 shadow-sm transition">
+        Command & Blueprint
+      </button>
+      <button onclick="switchTab('tab-topology')" id="nav-topology" class="tab-btn px-3.5 py-1.5 rounded-md font-medium text-neutral-400 hover:text-neutral-200 transition">
+        Swarm Topology
+      </button>
+      <button onclick="switchTab('tab-outreach')" id="nav-outreach" class="tab-btn px-3.5 py-1.5 rounded-md font-medium text-neutral-400 hover:text-neutral-200 transition flex items-center gap-1.5">
+        <span>Outreach Queue</span>
+        <span id="badge-outreach-count" class="bg-neutral-800 text-neutral-300 text-[10px] font-mono px-1.5 py-0.2 rounded">3</span>
+      </button>
+      <button onclick="switchTab('tab-vendors')" id="nav-vendors" class="tab-btn px-3.5 py-1.5 rounded-md font-medium text-neutral-400 hover:text-neutral-200 transition">
+        Vendor Matrix
+      </button>
+      <button onclick="switchTab('tab-competitors')" id="nav-competitors" class="tab-btn px-3.5 py-1.5 rounded-md font-medium text-neutral-400 hover:text-neutral-200 transition">
+        Competitor Radar
+      </button>
+    </div>
+
+    <div class="hidden sm:flex items-center gap-3 text-xs text-neutral-500 font-mono">
+      <span>STATE: <span class="text-neutral-300 font-semibold uppercase" id="orchestrator-state-pill">IDLE</span></span>
+      <span>&bull;</span>
+      <span>SUPERVISOR: <span class="text-neutral-300">ACTIVE</span></span>
+    </div>
+  </div>
+
+  <!-- Main View Area -->
+  <main class="flex-1 px-6 py-6 max-w-7xl mx-auto w-full">
+
+    <!-- TAB 1: Command & Blueprint Editor -->
+    <section id="tab-command" class="tab-content space-y-6">
+      
+      <!-- Spotlight Prompt Box -->
+      <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 backdrop-blur-sm">
+        <label class="block text-xs font-medium text-neutral-400 mb-2 tracking-tight">
+          Describe the startup you want to build
+        </label>
+        <div class="flex items-center gap-2.5">
+          <div class="relative flex-1">
+            <input type="text" id="prompt-input" 
+                   value="I want to build an AI-powered automated accounts payable platform for mid-market construction companies in the US."
+                   placeholder="e.g. AI-powered clinical documentation copilot for private medical practices..."
+                   class="w-full bg-neutral-950 border border-neutral-750 focus:border-neutral-500 rounded-lg px-4 py-2.5 text-sm text-white placeholder-neutral-500 font-sans transition">
+          </div>
+          <button onclick="compilePromptToBlueprint()" id="btn-compile" class="bg-white hover:bg-neutral-200 text-black text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition whitespace-nowrap active:scale-[0.99]">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Compile Blueprint</span>
+          </button>
+        </div>
+        <p class="text-[11px] text-neutral-500 mt-2">The Prompt Enricher infers required tech stack APIs, ideal hire backgrounds, VC thesis keywords, and competitors into a deterministic <code class="text-neutral-300 font-mono">config.yaml</code>.</p>
+      </div>
+
+      <!-- Blueprint YAML Editor & Metadata Split -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Editor Column -->
+        <div class="lg:col-span-8 bg-neutral-900/50 border border-neutral-800 rounded-xl flex flex-col overflow-hidden">
+          <div class="px-4 py-3 border-b border-neutral-800 flex items-center justify-between bg-neutral-900/90">
+            <div class="flex items-center gap-2">
+              <i data-lucide="file-code" class="w-3.5 h-3.5 text-neutral-400"></i>
+              <span class="text-xs font-semibold text-neutral-200 font-mono">config.yaml (Single Source of Truth)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="resetToSample()" class="text-[11px] text-neutral-400 hover:text-white px-2.5 py-1 rounded border border-neutral-800 hover:bg-neutral-800 transition">
+                Reset
+              </button>
+              <button onclick="launchAgentsFromYaml()" id="btn-launch-swarm" class="bg-white text-black hover:bg-neutral-200 text-xs font-semibold px-3.5 py-1 rounded-md flex items-center gap-1.5 transition active:scale-[0.98]">
+                <i data-lucide="play" class="w-3 h-3 fill-black"></i>
+                <span>Launch Swarm</span>
+              </button>
+            </div>
+          </div>
+          <textarea id="yaml-editor" spellcheck="false" class="w-full flex-1 min-h-[420px] bg-black font-mono text-xs text-neutral-300 p-4 leading-relaxed resize-none focus:outline-none"></textarea>
+        </div>
+
+        <!-- Metadata & Rules Column -->
+        <div class="lg:col-span-4 space-y-4">
+          <div class="bg-neutral-900/50 border border-neutral-800 rounded-xl p-4">
+            <h3 class="text-xs font-semibold text-white uppercase tracking-wider mb-3">Project Metadata</h3>
+            <div class="space-y-2 text-xs font-sans">
+              <div class="flex justify-between py-1.5 border-b border-neutral-850">
+                <span class="text-neutral-500">Project Name</span>
+                <span class="text-white font-medium" id="summary-name">BuildPay AI</span>
+              </div>
+              <div class="flex justify-between py-1.5 border-b border-neutral-850">
+                <span class="text-neutral-500">Sector</span>
+                <span class="text-neutral-200 text-right truncate max-w-[180px]" id="summary-sector">Construction Fintech</span>
+              </div>
+              <div class="flex justify-between py-1.5 border-b border-neutral-850">
+                <span class="text-neutral-500">Stage</span>
+                <span class="text-neutral-200">Pre-Seed</span>
+              </div>
+              <div class="flex justify-between py-1.5 border-b border-neutral-850">
+                <span class="text-neutral-500">Target Companies</span>
+                <span class="text-neutral-200 text-right truncate max-w-[170px]" id="summary-backgrounds">Procore, Ramp, Brex</span>
+              </div>
+              <div class="flex justify-between py-1.5">
+                <span class="text-neutral-500">Daily Credit Cap</span>
+                <span class="text-neutral-200 font-mono">500 Credits</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-neutral-900/50 border border-neutral-800 rounded-xl p-4">
+            <h3 class="text-xs font-semibold text-white uppercase tracking-wider mb-2.5">Crustdata Funnel Protocol</h3>
+            <div class="space-y-2 text-xs text-neutral-400">
+              <div class="flex items-start gap-2">
+                <span class="text-neutral-500 font-mono text-[11px]">01</span>
+                <span><strong>Broad Discovery</strong> uses low-cost cached DB search (0.03 credits/res).</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="text-neutral-500 font-mono text-[11px]">02</span>
+                <span><strong>Scoring & Filter</strong> ranks candidates, vendors, and VCs deterministically.</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="text-neutral-500 font-mono text-[11px]">03</span>
+                <span><strong>Deep Enrichment</strong> is reserved strictly for top 5-10% shortlisted entities.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: Agent Swarm Topology & Terminal Log Stream -->
+    <section id="tab-topology" class="tab-content hidden space-y-6">
+      
+      <!-- Topology Architecture -->
+      <div class="bg-neutral-900/50 border border-neutral-800 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-6 pb-3 border-b border-neutral-850">
+          <div>
+            <h2 class="text-sm font-semibold text-white tracking-tight">Agent Swarm Architecture</h2>
+            <p class="text-xs text-neutral-500 mt-0.5">Hub-and-spoke coordination managed by the Parent Supervisor over a unified Event Bus.</p>
+          </div>
+          <span class="text-[11px] font-mono text-neutral-400 border border-neutral-800 px-2.5 py-1 rounded bg-neutral-950">
+            Topology: 1 Supervisor + 4 Subagents
+          </span>
+        </div>
+
+        <div class="flex flex-col items-center gap-6 py-2">
+          <!-- Supervisor Node Card -->
+          <div class="w-full max-w-md bg-neutral-950 border border-neutral-700/80 rounded-xl p-4 text-center shadow-md">
+            <div class="flex items-center justify-center gap-2 mb-1">
+              <i data-lucide="shield" class="w-4 h-4 text-white"></i>
+              <h3 class="text-xs font-semibold uppercase tracking-wider text-white">Parent Supervisor</h3>
+            </div>
+            <p class="text-[11px] text-neutral-400">State Machine &bull; Budget Enforcer &bull; Inter-Agent Event Router</p>
+            <div class="mt-2.5">
+              <span class="text-[10px] font-mono text-neutral-300 border border-neutral-750 bg-neutral-900 px-2 py-0.5 rounded">
+                STATE: ACTIVE
+              </span>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="w-full max-w-3xl h-px bg-neutral-800"></div>
+
+          <!-- 4 Subagents Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+            <!-- Talent Agent -->
+            <div class="bg-neutral-950 border border-neutral-800 hover:border-neutral-700 rounded-xl p-4 flex flex-col justify-between transition">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-semibold text-white">Talent Agent</span>
+                  <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                </div>
+                <p class="text-xs text-neutral-400 leading-relaxed">Scouts founding engineers; synthesizes tenure & recent posts into cold outreach.</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-neutral-850 flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                <span>/person/search</span>
+                <span class="text-neutral-300">ONLINE</span>
+              </div>
+            </div>
+
+            <!-- Vendor Agent -->
+            <div class="bg-neutral-950 border border-neutral-800 hover:border-neutral-700 rounded-xl p-4 flex flex-col justify-between transition">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-semibold text-white">Vendor Agent</span>
+                  <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                </div>
+                <p class="text-xs text-neutral-400 leading-relaxed">Benchmarks B2B APIs via headcount growth, web traffic & pricing models.</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-neutral-850 flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                <span>/company/enrich</span>
+                <span class="text-neutral-300">ONLINE</span>
+              </div>
+            </div>
+
+            <!-- VC Agent -->
+            <div class="bg-neutral-950 border border-neutral-800 hover:border-neutral-700 rounded-xl p-4 flex flex-col justify-between transition">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-semibold text-white">VC Agent</span>
+                  <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                </div>
+                <p class="text-xs text-neutral-400 leading-relaxed">Matches vertical investors via portco funding history & social thesis posts.</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-neutral-850 flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                <span>/social_post/search</span>
+                <span class="text-neutral-300">ONLINE</span>
+              </div>
+            </div>
+
+            <!-- Competitor Agent -->
+            <div class="bg-neutral-950 border border-neutral-800 hover:border-neutral-700 rounded-xl p-4 flex flex-col justify-between transition">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-semibold text-white">Competitor Agent</span>
+                  <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                </div>
+                <p class="text-xs text-neutral-400 leading-relaxed">Tracks rival roadmaps & tech stacks; emits poaching signal upon engineer exit.</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-neutral-850 flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                <span>/job/search</span>
+                <span class="text-neutral-300">ONLINE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Apple Terminal View -->
+      <div class="bg-neutral-950 border border-neutral-800 rounded-xl overflow-hidden flex flex-col">
+        <div class="px-4 py-2.5 border-b border-neutral-850 bg-neutral-900/60 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5">
+              <span class="h-2 w-2 rounded-full bg-neutral-700"></span>
+              <span class="h-2 w-2 rounded-full bg-neutral-700"></span>
+              <span class="h-2 w-2 rounded-full bg-neutral-700"></span>
+            </div>
+            <span class="text-xs font-mono text-neutral-400 ml-2">Console / agent_audit_logs</span>
+          </div>
+          <span class="text-[11px] font-mono text-neutral-500">SSE: /api/stream/events</span>
+        </div>
+        <div id="terminal-drawer" class="h-64 overflow-y-auto p-4 font-mono text-xs text-neutral-300 leading-5 space-y-1">
+          <div class="text-neutral-500">[System] Initialized. Ready to stream agent events...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: Human-in-the-Loop Outreach Queue -->
+    <section id="tab-outreach" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between mb-2">
+        <div>
+          <h2 class="text-sm font-semibold text-white tracking-tight">Human-in-the-Loop Outreach Queue</h2>
+          <p class="text-xs text-neutral-500 mt-0.5">Verify AI-drafted outreach citing real Crustdata signals before dispatching. 1-Click Approve & Send.</p>
+        </div>
+        <div class="inline-flex bg-neutral-900 p-0.5 rounded-lg border border-neutral-800 text-xs">
+          <button onclick="filterOutreach('ALL')" class="outreach-filter px-3 py-1 rounded-md text-white bg-neutral-800 font-medium">All</button>
+          <button onclick="filterOutreach('CANDIDATE')" class="outreach-filter px-3 py-1 rounded-md text-neutral-400 hover:text-white">Talent</button>
+          <button onclick="filterOutreach('VC')" class="outreach-filter px-3 py-1 rounded-md text-neutral-400 hover:text-white">Investors</button>
+        </div>
+      </div>
+
+      <div id="outreach-cards-container" class="space-y-4">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 4: Vendor Comparison Matrix -->
+    <section id="tab-vendors" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between mb-2">
+        <div>
+          <h2 class="text-sm font-semibold text-white tracking-tight">Vendor & API Benchmark Matrix</h2>
+          <p class="text-xs text-neutral-500 mt-0.5">Side-by-side evaluation of B2B providers ranked by Crustdata firmographic metrics and traffic velocity.</p>
+        </div>
+      </div>
+
+      <div class="bg-neutral-950 border border-neutral-800 rounded-xl overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-neutral-800 text-neutral-500 uppercase font-mono text-[11px] bg-neutral-900/40">
+              <th class="py-3 px-4 font-medium">Provider / Domain</th>
+              <th class="py-3 px-4 font-medium">Category</th>
+              <th class="py-3 px-4 font-medium">Headcount (Growth)</th>
+              <th class="py-3 px-4 font-medium">Web Traffic</th>
+              <th class="py-3 px-4 font-medium">Sentiment</th>
+              <th class="py-3 px-4 font-medium">Pricing Model</th>
+              <th class="py-3 px-4 text-right font-medium">Score</th>
+            </tr>
+          </thead>
+          <tbody id="vendor-table-body" class="divide-y divide-neutral-850 font-sans">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 5: Competitor Radar & Live Feed -->
+    <section id="tab-competitors" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between mb-2">
+        <div>
+          <h2 class="text-sm font-semibold text-white tracking-tight">Competitor Intelligence & Tech Radar</h2>
+          <p class="text-xs text-neutral-500 mt-0.5">Surveillance of rival companies, detected technographics, and active engineering openings.</p>
+        </div>
+      </div>
+
+      <div id="competitor-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JavaScript Client Logic -->
+  <script>
+    let activeTab = 'tab-command';
+    let allEntities = [];
+    let currentFilter = 'ALL';
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-neutral-800', 'text-white', 'shadow-sm');
+        btn.classList.add('text-neutral-400');
+      });
+
+      const target = document.getElementById(tabId);
+      if (target) target.classList.remove('hidden');
+
+      const navBtn = document.getElementById('nav-' + tabId.replace('tab-', ''));
+      if (navBtn) {
+        navBtn.classList.add('bg-neutral-800', 'text-white', 'shadow-sm');
+        navBtn.classList.remove('text-neutral-400');
+      }
+
+      activeTab = tabId;
+      if (tabId === 'tab-outreach') loadOutreachQueue();
+      if (tabId === 'tab-vendors') loadVendors();
+      if (tabId === 'tab-competitors') loadCompetitors();
+      if (tabId === 'tab-topology') loadTopology();
+    }
+
+    async function loadCurrentProject() {
+      try {
+        const res = await fetch('/api/project/current');
+        const data = await res.json();
+        if (data.yaml) {
+          document.getElementById('yaml-editor').value = data.yaml;
+          if (data.project) {
+            document.getElementById('summary-name').innerText = data.project.name || 'BuildPay AI';
+            document.getElementById('header-project-name').innerText = data.project.name || 'BuildPay AI';
+          }
+        }
+      } catch (e) {
+        console.error('Project load error:', e);
+      }
+    }
+
+    async function compilePromptToBlueprint() {
+      const prompt = document.getElementById('prompt-input').value;
+      const btn = document.getElementById('btn-compile');
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> <span>Compiling...</span>`;
+      lucide.createIcons();
+
+      try {
+        const res = await fetch('/api/blueprint/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+        const data = await res.json();
+        if (data.yaml) {
+          document.getElementById('yaml-editor').value = data.yaml;
+          document.getElementById('summary-name').innerText = data.blueprint.project_metadata.name;
+          document.getElementById('header-project-name').innerText = data.blueprint.project_metadata.name;
+          document.getElementById('summary-sector').innerText = data.blueprint.project_metadata.sector;
+        }
+      } catch (e) {
+        alert('Compilation failed: ' + e);
+      } finally {
+        btn.innerHTML = `<i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span>Compile Blueprint</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    async function launchAgentsFromYaml() {
+      const yaml = document.getElementById('yaml-editor').value;
+      const btn = document.getElementById('btn-launch-swarm');
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> <span>Launching...</span>`;
+      lucide.createIcons();
+
+      try {
+        const res = await fetch('/api/blueprint/launch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ yaml })
+        });
+        document.getElementById('orchestrator-state-pill').innerText = 'RUNNING';
+        switchTab('tab-topology');
+      } catch (e) {
+        alert('Launch failed: ' + e);
+      } finally {
+        btn.innerHTML = `<i data-lucide="play" class="w-3 h-3 fill-black"></i> <span>Launch Swarm</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    async function loadOutreachQueue() {
+      try {
+        const res = await fetch('/api/entities');
+        const data = await res.json();
+        allEntities = data.entities || [];
+        renderOutreachItems();
+      } catch (e) {
+        console.error('Outreach load error:', e);
+      }
+    }
+
+    function filterOutreach(type) {
+      currentFilter = type;
+      document.querySelectorAll('.outreach-filter').forEach(btn => {
+        btn.classList.remove('bg-neutral-800', 'text-white');
+        btn.classList.add('text-neutral-400');
+      });
+      event.target.classList.add('bg-neutral-800', 'text-white');
+      event.target.classList.remove('text-neutral-400');
+      renderOutreachItems();
+    }
+
+    function renderOutreachItems() {
+      const container = document.getElementById('outreach-cards-container');
+      container.innerHTML = '';
+
+      let items = allEntities.filter(e => e.entity_type === 'CANDIDATE' || e.entity_type === 'VC');
+      if (currentFilter !== 'ALL') {
+        items = items.filter(e => e.entity_type === currentFilter);
+      }
+
+      document.getElementById('badge-outreach-count').innerText = items.length;
+
+      if (items.length === 0) {
+        container.innerHTML = '<div class="text-neutral-500 text-xs py-12 text-center border border-neutral-850 rounded-xl bg-neutral-950 font-mono">No drafts matching filter.</div>';
+        return;
+      }
+
+      items.forEach(item => {
+        const raw = item.raw_data || {};
+        const isCandidate = item.entity_type === 'CANDIDATE';
+        const isSent = item.status === 'EMAIL_SENT';
+
+        const card = document.createElement('div');
+        card.className = "bg-neutral-950 border border-neutral-800 hover:border-neutral-700/80 rounded-xl p-5 grid grid-cols-1 lg:grid-cols-12 gap-6 transition";
+        card.innerHTML = `
+          <!-- Profile Left Column -->
+          <div class="lg:col-span-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded border border-neutral-800 text-neutral-400 bg-neutral-900">
+                ${isCandidate ? 'TALENT / CANDIDATE' : 'VENTURE CAPITALIST'}
+              </span>
+              <span class="text-xs font-mono text-neutral-400">Match: <strong class="text-white">${Math.round((item.match_score || 0.9) * 100)}%</strong></span>
+            </div>
+            
+            <div>
+              <h3 class="text-sm font-semibold text-white tracking-tight">${item.name}</h3>
+              <p class="text-xs text-neutral-400 mt-0.5 leading-relaxed">${raw.headline || raw.title || ''}</p>
+            </div>
+
+            ${raw.recent_posts && raw.recent_posts.length ? `
+              <blockquote class="border-l-2 border-neutral-700 pl-3 py-0.5 text-xs text-neutral-400 italic">
+                "${raw.recent_posts[0]}"
+              </blockquote>
+            ` : ''}
+
+            ${raw.thesis_evidence ? `
+              <blockquote class="border-l-2 border-neutral-700 pl-3 py-0.5 text-xs text-neutral-400 italic">
+                "${raw.thesis_evidence}"
+              </blockquote>
+            ` : ''}
+
+            <div class="text-[11px] font-mono text-neutral-500 truncate pt-1">
+              <a href="${item.identifier}" target="_blank" class="hover:text-neutral-300 inline-flex items-center gap-1">
+                <span>${item.identifier}</span>
+                <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Email Draft Right Column -->
+          <div class="lg:col-span-7 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-neutral-850 pt-4 lg:pt-0 lg:pl-6">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-mono text-neutral-400 flex items-center gap-1.5">
+                  <i data-lucide="mail" class="w-3 h-3 text-neutral-500"></i> Outreach Synthesis
+                </span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded ${isSent ? 'border border-emerald-500/40 text-emerald-400 bg-emerald-500/10' : 'border border-neutral-800 text-neutral-400 bg-neutral-900'}">
+                  ${isSent ? 'EMAIL SENT' : 'DRAFT READY'}
+                </span>
+              </div>
+              <pre class="bg-neutral-900/60 font-sans text-xs text-neutral-300 p-3.5 rounded-lg border border-neutral-800/80 whitespace-pre-wrap leading-relaxed max-h-52 overflow-y-auto">${item.email_draft || 'Draft pending...'}</pre>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 mt-4">
+              ${isSent ? `
+                <span class="text-xs text-neutral-400 font-mono flex items-center gap-1">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Dispatched
+                </span>
+              ` : `
+                <button onclick="approveEmail('${item.id}')" class="bg-white hover:bg-neutral-200 text-black text-xs font-semibold px-3.5 py-1.5 rounded-md flex items-center gap-1.5 transition active:scale-[0.98]">
+                  <span>Approve & Send</span>
+                  <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    async function approveEmail(entityId) {
+      try {
+        await fetch(`/api/outreach/${entityId}/approve`, { method: 'POST' });
+        loadOutreachQueue();
+      } catch (e) {
+        alert('Approval failed: ' + e);
+      }
+    }
+
+    async function loadVendors() {
+      try {
+        const res = await fetch('/api/entities?type=VENDOR');
+        const data = await res.json();
+        const tbody = document.getElementById('vendor-table-body');
+        tbody.innerHTML = '';
+
+        data.entities.forEach(v => {
+          const raw = v.raw_data || {};
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-neutral-900/40 transition";
+          tr.innerHTML = `
+            <td class="py-3 px-4 font-medium text-white">
+              ${v.name}
+              <div class="text-[11px] text-neutral-500 font-mono">${v.identifier}</div>
+            </td>
+            <td class="py-3 px-4 text-neutral-400 font-mono text-[11px]">${raw.service_category || 'API'}</td>
+            <td class="py-3 px-4 text-neutral-300 font-mono text-xs">
+              ${raw.headcount || 30} ppl <span class="text-neutral-500 text-[11px]">(+${raw.headcount_growth_mom || 5}%)</span>
+            </td>
+            <td class="py-3 px-4 text-neutral-300 font-mono text-xs">${raw.monthly_web_traffic || 'N/A'}</td>
+            <td class="py-3 px-4 text-neutral-300 text-xs">${raw.employee_sentiment || '4.5 / 5.0'}</td>
+            <td class="py-3 px-4 text-neutral-400 text-xs">${raw.pricing_tier || 'Pay-as-you-go'}</td>
+            <td class="py-3 px-4 text-right font-mono font-medium text-white">${Math.round((v.match_score || 0.9) * 100)}%</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        console.error('Vendor load error:', e);
+      }
+    }
+
+    async function loadCompetitors() {
+      try {
+        const res = await fetch('/api/entities?type=COMPETITOR');
+        const data = await res.json();
+        const container = document.getElementById('competitor-cards-container');
+        container.innerHTML = '';
+
+        data.entities.forEach(c => {
+          const raw = c.raw_data || {};
+          const card = document.createElement('div');
+          card.className = "bg-neutral-950 border border-neutral-800 rounded-xl p-5 space-y-3.5";
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-semibold text-white">${c.name}</h3>
+                <span class="text-xs font-mono text-neutral-500">${c.identifier}</span>
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded border border-neutral-800 text-neutral-400 bg-neutral-900">
+                THREAT: ${raw.threat_level || 'MODERATE'}
+              </span>
+            </div>
+            <p class="text-xs text-neutral-400 leading-relaxed">${raw.description || ''}</p>
+            
+            <div class="bg-neutral-900/60 p-3 rounded-lg text-xs font-mono border border-neutral-850 flex justify-between">
+              <div>
+                <span class="text-neutral-500 block text-[10px]">HEADCOUNT</span>
+                <span class="text-neutral-200">${raw.headcount || 140} (${raw.headcount_trend || '+10%'})</span>
+              </div>
+              <div class="text-right">
+                <span class="text-neutral-500 block text-[10px]">VULNERABILITY</span>
+                <span class="text-neutral-300">${raw.vulnerability || 'Slow UI execution'}</span>
+              </div>
+            </div>
+
+            <div>
+              <span class="text-[10px] uppercase font-mono text-neutral-500 block mb-1.5">Detected Technographics Stack:</span>
+              <div class="flex flex-wrap gap-1">
+                ${(raw.detected_tech_stack || ['React', 'PostgreSQL', 'AWS']).map(t => 
+                  `<span class="text-[11px] bg-neutral-900 border border-neutral-800 text-neutral-300 font-mono px-2 py-0.5 rounded">${t}</span>`
+                ).join('')}
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (e) {
+        console.error('Competitor load error:', e);
+      }
+    }
+
+    async function simulatePoachingEvent() {
+      try {
+        const res = await fetch('/api/simulate/poach', { method: 'POST' });
+        const data = await res.json();
+        switchTab('tab-outreach');
+      } catch (e) {
+        alert('Simulation failed: ' + e);
+      }
+    }
+
+    function initSSE() {
+      const evtSource = new EventSource('/api/stream/events');
+      const terminal = document.getElementById('terminal-drawer');
+
+      evtSource.addEventListener('agent_event', (e) => {
+        const data = JSON.parse(e.data);
+        const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const line = document.createElement('div');
+        line.className = "leading-5 flex items-start gap-2";
+
+        const source = (data.source_agent || 'SYSTEM').toUpperCase();
+        const msg = data.payload?.message || data.event_type;
+
+        if (data.event_type === 'HIGH_VALUE_TALENT_DEPARTURE' || data.event_type === 'POACHING_ALERT_READY') {
+          line.innerHTML = `<span class="text-neutral-500 font-mono">${time}</span> <span class="text-white font-semibold font-mono">[POACHING]</span> <span class="text-neutral-200">${msg}</span>`;
+        } else {
+          line.innerHTML = `<span class="text-neutral-500 font-mono">${time}</span> <span class="text-neutral-400 font-mono">[${source}]</span> <span class="text-neutral-300">${msg}</span>`;
+        }
+
+        terminal.appendChild(line);
+        terminal.scrollTop = terminal.scrollHeight;
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadCurrentProject();
+      initSSE();
+    });
+  </script>
+</body>
+</html>
